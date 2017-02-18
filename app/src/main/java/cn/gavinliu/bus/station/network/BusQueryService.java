@@ -6,6 +6,7 @@ import cn.gavinliu.bus.station.entity.Bus;
 import cn.gavinliu.bus.station.entity.Line;
 import cn.gavinliu.bus.station.entity.Station;
 import cn.gavinliu.bus.station.network.bean.ResponseBean;
+import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 import rx.Observable;
@@ -23,10 +24,10 @@ interface BusQueryService {
     Observable<ResponseBean<List<Line>>> getLineListByStationName(@Query("key") String key);
 
     @GET("/Handlers/BusQuery.ashx?handlerName=GetStationList")
-    Observable<ResponseBean<List<Station>>> getStationList(@Query("lineId") String lineId);
+    Call<ResponseBean<List<Station>>> getStationList(@Query("lineId") String lineId);
 
     @GET("/Handlers/BusQuery.ashx?handlerName=GetBusListOnRoad")
-    Observable<ResponseBean<List<Bus>>> GetBusListOnLine(@Query("lineName") String lineName, @Query("fromStation") String fromStation);
+    Call<ResponseBean<List<Bus>>> getBusListOnLine(@Query("lineName") String lineName, @Query("fromStation") String fromStation);
 
     @GET("/Handlers/BusQuery.ashx?handlerName=GetStationNameList")
     Observable<ResponseBean<List<String>>> getStationNameList(@Query("key") String key);
