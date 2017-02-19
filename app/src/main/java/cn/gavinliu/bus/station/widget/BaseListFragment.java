@@ -1,4 +1,4 @@
-package cn.gavinliu.bus.station.ui;
+package cn.gavinliu.bus.station.widget;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -75,15 +75,19 @@ public abstract class BaseListFragment<E, VH extends RecyclerView.ViewHolder> ex
     protected void setListData(List<E> data) {
         if (mAdapter == null) return;
 
-        if (data != null &&data.size() > 0) {
+        if (data != null && data.size() > 0) {
             showRecyclerView();
 
             mAdapter.setData(data);
             mAdapter.notifyDataSetChanged();
         } else {
-            showTipsView("没有");
+            showTipsView(getEmptyTipsText());
         }
 
+    }
+
+    protected String getEmptyTipsText() {
+        return getResources().getString(R.string.app_name);
     }
 
     protected void notifyDataSetChanged() {
@@ -92,24 +96,5 @@ public abstract class BaseListFragment<E, VH extends RecyclerView.ViewHolder> ex
     }
 
     protected abstract BaseAdapter<E, VH> createAdapter();
-
-    protected static abstract class BaseAdapter<E, VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
-
-        private List<E> mData;
-
-        public void setData(List<E> data) {
-            mData = data;
-            notifyDataSetChanged();
-        }
-
-        @Override
-        public int getItemCount() {
-            return mData != null ? mData.size() : 0;
-        }
-
-        public E getItem(int position) {
-            return mData.get(position);
-        }
-    }
 
 }

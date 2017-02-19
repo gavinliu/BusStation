@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">掌上站台</string>
+
+    <string name="search_edit_hint">请输入站名</string>
 </resources>

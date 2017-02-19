@@ -1,4 +1,4 @@
-package cn.gavinliu.bus.station.ui;
+package cn.gavinliu.bus.station.widget;
 
 import android.support.v7.app.AppCompatActivity;
 

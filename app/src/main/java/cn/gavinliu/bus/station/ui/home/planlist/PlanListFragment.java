@@ -1,4 +1,4 @@
-package cn.gavinliu.bus.station.ui.home;
+package cn.gavinliu.bus.station.ui.home.planlist;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,7 +11,8 @@ import android.widget.TextView;
 import java.util.List;
 
 import cn.gavinliu.bus.station.db.Plan;
-import cn.gavinliu.bus.station.ui.BaseListFragment;
+import cn.gavinliu.bus.station.widget.BaseAdapter;
+import cn.gavinliu.bus.station.widget.BaseListFragment;
 import cn.gavinliu.bus.station.utils.ActivityRouter;
 import cn.gavinliu.bus.station.utils.DbUtils;
 import cn.gavinliu.bus.station.widget.BaseViewHolder;
@@ -76,7 +77,7 @@ public class PlanListFragment extends BaseListFragment<Plan, BaseViewHolder> {
         return new Adapter(mItemListener);
     }
 
-    private static class Adapter extends BaseListFragment.BaseAdapter<Plan, Holder> {
+    private static class Adapter extends BaseAdapter<Plan, Holder> {
 
         private ItemListener mItemListener;
 

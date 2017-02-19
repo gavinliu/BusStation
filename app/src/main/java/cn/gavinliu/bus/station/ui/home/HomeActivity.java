@@ -9,13 +9,15 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import cn.gavinliu.bus.station.ui.BaseActivity;
+import cn.gavinliu.bus.station.ui.home.planlist.PlanListFragment;
+import cn.gavinliu.bus.station.ui.home.search.SearchFragment;
+import cn.gavinliu.bus.station.widget.BaseActivity;
 import cn.gavinliu.zhuhai.station.R;
 
 public class HomeActivity extends BaseActivity {
 
     private static final String TAG = HomeActivity.class.getSimpleName();
-    
+
     private FragmentManager mFragmentManager;
 
     private PlanListFragment mPlanListFragment;
@@ -47,7 +49,7 @@ public class HomeActivity extends BaseActivity {
         MenuItem searchItem = menu.findItem(R.id.action_search);
 
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        searchView.setQueryHint("请输入站名");
+        searchView.setQueryHint(getResources().getString(R.string.search_edit_hint));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {

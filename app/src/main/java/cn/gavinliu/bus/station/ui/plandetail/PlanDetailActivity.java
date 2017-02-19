@@ -19,7 +19,7 @@ import cn.gavinliu.bus.station.db.Plan;
 import cn.gavinliu.bus.station.entity.Bus;
 import cn.gavinliu.bus.station.entity.Line;
 import cn.gavinliu.bus.station.network.BusQueryServiceImpl;
-import cn.gavinliu.bus.station.ui.BaseActivity;
+import cn.gavinliu.bus.station.widget.BaseActivity;
 import cn.gavinliu.bus.station.utils.CalculateSoonBus;
 import cn.gavinliu.zhuhai.station.R;
 import rx.Observable;

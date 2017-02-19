@@ -1,4 +1,4 @@
-package cn.gavinliu.bus.station.ui.home;
+package cn.gavinliu.bus.station.ui.home.search;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,8 +13,8 @@ import android.widget.TextView;
 import java.util.List;
 
 import cn.gavinliu.bus.station.network.BusQueryServiceImpl;
-import cn.gavinliu.bus.station.ui.BaseFragment;
-import cn.gavinliu.bus.station.ui.line.LineListActivity;
+import cn.gavinliu.bus.station.widget.BaseFragment;
+import cn.gavinliu.bus.station.ui.choiceline.ChoiceLineActivity;
 import cn.gavinliu.zhuhai.station.R;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -116,8 +116,8 @@ public class SearchFragment extends BaseFragment {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(v.getContext(), LineListActivity.class);
-                    intent.putExtra(LineListActivity.KEY_STATION, text.getText().toString());
+                    Intent intent = new Intent(v.getContext(), ChoiceLineActivity.class);
+                    intent.putExtra(ChoiceLineActivity.KEY_STATION, text.getText().toString());
                     v.getContext().startActivity(intent);
                 }
             });

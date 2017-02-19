@@ -1,4 +1,4 @@
-package cn.gavinliu.bus.station.ui.line;
+package cn.gavinliu.bus.station.ui.choiceline;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,7 +23,7 @@ import java.util.List;
 import cn.gavinliu.bus.station.db.Plan;
 import cn.gavinliu.bus.station.entity.Line;
 import cn.gavinliu.bus.station.network.BusQueryServiceImpl;
-import cn.gavinliu.bus.station.ui.BaseActivity;
+import cn.gavinliu.bus.station.widget.BaseActivity;
 import cn.gavinliu.bus.station.utils.ActivityRouter;
 import cn.gavinliu.bus.station.utils.DbUtils;
 import cn.gavinliu.zhuhai.station.R;
@@ -35,11 +35,11 @@ import rx.schedulers.Schedulers;
  * Created by gavin on 2017/2/17.
  */
 
-public class LineListActivity extends BaseActivity {
+public class ChoiceLineActivity extends BaseActivity {
 
     public static final String KEY_STATION = "KEY_STATION";
 
-    private static final String TAG = LineListActivity.class.getSimpleName();
+    private static final String TAG = ChoiceLineActivity.class.getSimpleName();
 
     private RecyclerView mRecyclerView;
     private Adapter mAdapter;
@@ -90,9 +90,9 @@ public class LineListActivity extends BaseActivity {
     }
 
     private void createDialog() {
-        View view = LayoutInflater.from(LineListActivity.this).inflate(R.layout.dialog_save_plan, null, false);
+        View view = LayoutInflater.from(ChoiceLineActivity.this).inflate(R.layout.dialog_save_plan, null, false);
         mEditText = (EditText) view.findViewById(R.id.edit);
-        mDialog = new AlertDialog.Builder(LineListActivity.this)
+        mDialog = new AlertDialog.Builder(ChoiceLineActivity.this)
                 .setTitle("保存方案")
                 .setView(view)
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -109,7 +109,7 @@ public class LineListActivity extends BaseActivity {
 
                             DbUtils.savePlan(plan);
 
-                            ActivityRouter.startPlanDetail(LineListActivity.this, plan);
+                            ActivityRouter.startPlanDetail(ChoiceLineActivity.this, plan);
                         }
                     }
                 })
