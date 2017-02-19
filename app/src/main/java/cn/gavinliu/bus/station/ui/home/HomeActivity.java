@@ -18,7 +18,7 @@ public class HomeActivity extends BaseActivity {
     
     private FragmentManager mFragmentManager;
 
-    private HistoryFragment mHistoryFragment;
+    private PlanListFragment mPlanListFragment;
     private SearchFragment mSearchFragment;
 
     @Override
@@ -29,10 +29,10 @@ public class HomeActivity extends BaseActivity {
 
         if (savedInstanceState == null) {
             mSearchFragment = SearchFragment.newInstance();
-            mHistoryFragment = HistoryFragment.newInstance();
+            mPlanListFragment = PlanListFragment.newInstance();
 
             mFragmentManager.beginTransaction()
-                    .add(R.id.container, mHistoryFragment)
+                    .add(R.id.container, mPlanListFragment)
                     .commitAllowingStateLoss();
         }
 
@@ -68,7 +68,7 @@ public class HomeActivity extends BaseActivity {
             public boolean onMenuItemActionExpand(MenuItem item) {
                 mFragmentManager.beginTransaction()
                         .addToBackStack(null)
-                        .remove(mHistoryFragment)
+                        .remove(mPlanListFragment)
                         .replace(R.id.container, mSearchFragment)
                         .commitAllowingStateLoss();
 

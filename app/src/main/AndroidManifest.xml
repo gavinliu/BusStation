@@ -20,6 +20,8 @@
         </activity>
 
         <activity android:name="cn.gavinliu.bus.station.ui.line.LineListActivity" />
+
+        <activity android:name="cn.gavinliu.bus.station.ui.plandetail.PlanDetailActivity" />
     </application>
 
 </manifest>

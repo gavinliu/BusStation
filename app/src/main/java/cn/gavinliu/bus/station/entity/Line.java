@@ -1,10 +1,13 @@
 package cn.gavinliu.bus.station.entity;
 
+import java.io.Serializable;
+import java.util.List;
+
 /**
  * Created by Gavin on 17-1-5.
  */
 
-public class Line {
+public class Line implements Serializable {
 
     private String Id;
 
@@ -29,6 +32,21 @@ public class Line {
     private String Description;
 
     private int StationCount;
+
+    // ---->
+
+    private String mCurrentStation;
+
+    private int mCurrentStationIndex = -1;
+
+    private List<Station> mStations;
+
+    private List<Bus> mBuses;
+
+    private Bus mSoonBus;
+
+    private int mDist = -1;
+    // <----
 
     public String getId() {
         return Id;
@@ -126,8 +144,58 @@ public class Line {
         StationCount = stationCount;
     }
 
-    @Override
-    public String toString() {
-        return Name + ": " + FromStation + " -> " + ToStation;
+    public List<Station> getStations() {
+        return mStations;
     }
+
+    public void setStations(List<Station> stations) {
+        mStations = stations;
+    }
+
+    public List<Bus> getBuses() {
+        return mBuses;
+    }
+
+    public void setBuses(List<Bus> buses) {
+        mBuses = buses;
+    }
+
+    public String getCurrentStation() {
+        return mCurrentStation;
+    }
+
+    public void setCurrentStation(String currentStation) {
+        mCurrentStation = currentStation;
+    }
+
+    public Bus getSoonBus() {
+        return mSoonBus;
+    }
+
+    public void setSoonBus(Bus soonBus) {
+        mSoonBus = soonBus;
+    }
+
+    public int getCurrentStationIndex() {
+        return mCurrentStationIndex;
+    }
+
+    public void setCurrentStationIndex(int currentStationIndex) {
+        mCurrentStationIndex = currentStationIndex;
+    }
+
+    public int getDist() {
+        return mDist;
+    }
+
+    public void setDist(int dist) {
+        mDist = dist;
+    }
+
+
+    //    @Override
+//    public String toString() {
+//        return Name + ": " + FromStation + " -> " + ToStation;
+//    }
+
 }

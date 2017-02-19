@@ -1,10 +1,12 @@
 package cn.gavinliu.bus.station.entity;
 
+import java.io.Serializable;
+
 /**
  * Created by Gavin on 17-1-6.
  */
 
-public class Bus {
+public class Bus implements Serializable {
 
     private String BusNumber;
 

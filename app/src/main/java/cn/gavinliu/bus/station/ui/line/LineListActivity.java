@@ -1,25 +1,31 @@
 package cn.gavinliu.bus.station.ui.line;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.text.TextUtils;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.gavinliu.bus.station.db.Plan;
 import cn.gavinliu.bus.station.entity.Line;
 import cn.gavinliu.bus.station.network.BusQueryServiceImpl;
 import cn.gavinliu.bus.station.ui.BaseActivity;
+import cn.gavinliu.bus.station.utils.ActivityRouter;
+import cn.gavinliu.bus.station.utils.DbUtils;
 import cn.gavinliu.zhuhai.station.R;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -40,6 +46,14 @@ public class LineListActivity extends BaseActivity {
 
     private Button mButton;
 
+    private String mStation;
+
+    private ArrayList<Line> mSelectedLines;
+
+    private AlertDialog mDialog;
+
+    private EditText mEditText;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,23 +68,59 @@ public class LineListActivity extends BaseActivity {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                List<Line> lines = mAdapter.getSelectedLines();
-                for (Line line : lines) {
-                    Log.d(TAG, line.getName());
-                }
+                mSelectedLines = mAdapter.getSelectedLines();
+
+                mDialog.show();
             }
+
         });
 
         Intent intent = getIntent();
 
         if (intent != null) {
-            String stationName = intent.getStringExtra(KEY_STATION);
+            mStation = intent.getStringExtra(KEY_STATION);
             if (getSupportActionBar() != null) {
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                getSupportActionBar().setTitle(stationName);
+                getSupportActionBar().setTitle(mStation);
             }
-            getLine(stationName);
+            getLine(mStation);
         }
+
+        createDialog();
+    }
+
+    private void createDialog() {
+        View view = LayoutInflater.from(LineListActivity.this).inflate(R.layout.dialog_save_plan, null, false);
+        mEditText = (EditText) view.findViewById(R.id.edit);
+        mDialog = new AlertDialog.Builder(LineListActivity.this)
+                .setTitle("保存方案")
+                .setView(view)
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String string = mEditText.getText().toString();
+                        if (!TextUtils.isEmpty(string)) {
+
+                            Plan plan = new Plan();
+
+                            plan.setName(string);
+                            plan.setStation(mStation);
+                            plan.setLines(mSelectedLines);
+
+                            DbUtils.savePlan(plan);
+
+                            ActivityRouter.startPlanDetail(LineListActivity.this, plan);
+                        }
+                    }
+                })
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .setCancelable(false)
+                .create();
     }
 
     private void getLine(String key) {
@@ -91,6 +141,9 @@ public class LineListActivity extends BaseActivity {
 
                     @Override
                     public void onNext(List<Line> lines) {
+                        for (Line line : lines) {
+                            line.setCurrentStation(mStation);
+                        }
                         mAdapter.setLines(lines);
                     }
                 });
@@ -134,8 +187,8 @@ public class LineListActivity extends BaseActivity {
             holder.mTextView.setText(sb);
         }
 
-        public List<Line> getSelectedLines() {
-            List<Line> lines = new ArrayList<>();
+        public ArrayList<Line> getSelectedLines() {
+            ArrayList<Line> lines = new ArrayList<>();
             for (int i = 0; i < mSelectedPositions.size(); i++) {
                 int key = mSelectedPositions.keyAt(i);
                 if (mSelectedPositions.get(key)) {

@@ -60,7 +60,7 @@ public class BusQueryServiceImpl {
                 .flatMap(new Func1<Line, Observable<Line>>() {
                     @Override
                     public Observable<Line> call(Line line) {
-                        line.setBuses(getBusListOnLine(line.getId(), line.getFromStation()));
+                        line.setBuses(getBusListOnLine(line.getName(), line.getFromStation()));
                         return Observable.just(line);
                     }
                 });
@@ -77,10 +77,10 @@ public class BusQueryServiceImpl {
         return result;
     }
 
-    private List<Bus> getBusListOnLine(String lineId, String fromStation) {
+    private List<Bus> getBusListOnLine(String lineName, String fromStation) {
         List<Bus> result = null;
         try {
-            Response<ResponseBean<List<Bus>>> response = mService.getBusListOnLine(lineId, fromStation).execute();
+            Response<ResponseBean<List<Bus>>> response = mService.getBusListOnLine(lineName, fromStation).execute();
             result = response.body().data;
         } catch (IOException e) {
             e.printStackTrace();
