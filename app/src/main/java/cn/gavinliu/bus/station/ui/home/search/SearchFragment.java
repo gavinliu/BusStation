@@ -3,7 +3,6 @@ package cn.gavinliu.bus.station.ui.home.search;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,8 +12,10 @@ import android.widget.TextView;
 import java.util.List;
 
 import cn.gavinliu.bus.station.network.BusQueryServiceImpl;
-import cn.gavinliu.bus.station.widget.BaseFragment;
 import cn.gavinliu.bus.station.ui.choiceline.ChoiceLineActivity;
+import cn.gavinliu.bus.station.widget.BaseAdapter;
+import cn.gavinliu.bus.station.widget.BaseListFragment;
+import cn.gavinliu.bus.station.widget.BaseViewHolder;
 import cn.gavinliu.zhuhai.station.R;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -24,12 +25,9 @@ import rx.schedulers.Schedulers;
  * Created by gavin on 2017/2/17.
  */
 
-public class SearchFragment extends BaseFragment {
+public class SearchFragment extends BaseListFragment<String, BaseViewHolder> {
 
     private static final String TAG = SearchFragment.class.getSimpleName();
-
-    private RecyclerView mRecyclerView;
-    private Adapter mAdapter;
 
     public static SearchFragment newInstance() {
         Bundle args = new Bundle();
@@ -39,23 +37,15 @@ public class SearchFragment extends BaseFragment {
         return fragment;
     }
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_search, container, false);
-        return view;
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        mAdapter = new Adapter();
-
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.list);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        mRecyclerView.setAdapter(mAdapter);
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        showTipsView("输入站台关键词，搜索相关站台");
     }
 
     public void setKeyword(String key) {
+        showLoadingView();
+
         BusQueryServiceImpl.getInstance().getStationNameList(key)
                 .subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
@@ -68,24 +58,27 @@ public class SearchFragment extends BaseFragment {
 
                     @Override
                     public void onError(Throwable e) {
-
+                        showTipsView(getResources().getString(R.string.server_error));
                     }
 
                     @Override
                     public void onNext(List<String> strings) {
-                        mAdapter.setData(strings);
+                        setListData(strings);
                     }
                 });
     }
 
-    static class Adapter extends RecyclerView.Adapter<Holder> {
+    @Override
+    protected String getEmptyTipsText() {
+        return getResources().getString(R.string.search_result_empty_hint);
+    }
 
-        private List<String> mData;
+    @Override
+    protected BaseAdapter createAdapter() {
+        return new Adapter();
+    }
 
-        public void setData(List<String> data) {
-            mData = data;
-            notifyDataSetChanged();
-        }
+    static class Adapter extends BaseAdapter<String, Holder> {
 
         @Override
         public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -95,13 +88,8 @@ public class SearchFragment extends BaseFragment {
 
         @Override
         public void onBindViewHolder(Holder holder, int position) {
-            String item = mData.get(position);
+            String item = getItem(position);
             holder.setText(item);
-        }
-
-        @Override
-        public int getItemCount() {
-            return mData != null ? mData.size() : 0;
         }
     }
 

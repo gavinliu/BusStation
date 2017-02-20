@@ -34,7 +34,6 @@ public class Line implements Serializable {
     private int StationCount;
 
     // ---->
-
     private String mCurrentStation;
 
     private int mCurrentStationIndex = -1;

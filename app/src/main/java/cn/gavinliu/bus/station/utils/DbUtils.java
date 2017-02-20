@@ -1,5 +1,7 @@
 package cn.gavinliu.bus.station.utils;
 
+import com.litesuits.orm.db.assit.WhereBuilder;
+
 import java.util.List;
 
 import cn.gavinliu.bus.station.StationApplication;
@@ -17,5 +19,9 @@ public class DbUtils {
 
     public static List<Plan> getPlans() {
         return StationApplication.getLiteOrm().query(Plan.class);
+    }
+
+    public static void deletePlan(int id) {
+        StationApplication.getLiteOrm().delete(new WhereBuilder(Plan.class).where("_id = ?", id));
     }
 }

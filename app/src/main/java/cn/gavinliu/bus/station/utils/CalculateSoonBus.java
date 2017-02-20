@@ -58,11 +58,8 @@ public class CalculateSoonBus implements Func1<Line, Observable<Line>> {
             line.setSoonBus(soonBus);
 
             if (soonBus != null) {
-
                 Log.d(TAG, "***DIST: " + dist + ", " + soonBus.getBusNumber() + " " + soonBus.getCurrentStation());
             }
-
-
         }
 
         return Observable.just(line);

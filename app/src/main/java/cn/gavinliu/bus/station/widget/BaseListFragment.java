@@ -24,14 +24,14 @@ public abstract class BaseListFragment<E, VH extends RecyclerView.ViewHolder> ex
     protected RecyclerView mRecyclerView;
     protected BaseAdapter<E, VH> mAdapter;
 
-    protected int createViewID() {
+    protected int fragmentLayoutID() {
         return R.layout.base_fragment_list;
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(createViewID(), container, false);
+        return inflater.inflate(fragmentLayoutID(), container, false);
     }
 
     @Override
@@ -44,6 +44,7 @@ public abstract class BaseListFragment<E, VH extends RecyclerView.ViewHolder> ex
         mAdapter = createAdapter();
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.addItemDecoration(new ItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
     }
 
     @Override

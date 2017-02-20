@@ -66,9 +66,11 @@ public class PlanDetailActivity extends BaseActivity {
 
         }
 
-        String str = "从 " + mPlan.getStation() + " " + mPlan.getName();
-
-        getSupportActionBar().setTitle(str);
+        if (getSupportActionBar() != null) {
+            String title = getResources().getString(R.string.plan_title, mPlan.getStation(), mPlan.getName());
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle(title);
+        }
 
         mAdapter = new Adapter();
         mRecyclerView = (RecyclerView) findViewById(R.id.list);

@@ -1,5 +1,24 @@
 <resources>
     <string name="app_name">掌上站台</string>
+    
+    <string name="confirm">确认</string>
 
     <string name="search_edit_hint">请输入站名</string>
+    <string name="search_result_empty_hint">未找到相关站台</string>
+
+    <string name="server_error">服务器异常</string>
+
+    <string name="plan_title">从 %1$s %2$s</string>
+    <string name="plan_content">共有 %1$d 条线路</string>
+
+    <string name="line_line">%1$s -> %2$s</string>
+
+    <string name="choiceline_actionbar_title">选择线路(%1$s)</string>
+
+    <string name="plan_save">保存方案</string>
+    <string name="plan_name_edit_hint">输入一个名称，比如上班</string>
+    <string name="plan_name_null_tips">必须输入一个名称</string>
+    <string name="plan_lines_null_tips">请至少选择一条线路</string>
+    
+    <string name="plan_list_empty_tips">站台方案为空，请通过搜索，添加方案。</string>
 </resources>
