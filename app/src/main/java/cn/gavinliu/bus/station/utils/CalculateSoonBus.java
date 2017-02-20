@@ -31,25 +31,27 @@ public class CalculateSoonBus implements Func1<Line, Observable<Line>> {
             int dist = -1;
             Bus soonBus = null;
 
-            for (Bus bus : buses) {
-                int index = -1;
-                for (int i = 0; i < stations.size(); i++) {
-                    Station s = stations.get(i);
-                    if (s.getName().equals(bus.getCurrentStation())) {
-                        index = i;
-                        break;
+            if (stations != null) {
+                for (Bus bus : buses) {
+                    int index = -1;
+                    for (int i = 0; i < stations.size(); i++) {
+                        Station s = stations.get(i);
+                        if (s.getName().equals(bus.getCurrentStation())) {
+                            index = i;
+                            break;
+                        }
                     }
-                }
 
-                int tempDist = line.getCurrentStationIndex() - index;
+                    int tempDist = line.getCurrentStationIndex() - index;
 
-                if (tempDist > 0) {
-                    if (dist == -1 || tempDist < dist) {
-                        dist = tempDist;
-                        soonBus = bus;
+                    if (tempDist > 0) {
+                        if (dist == -1 || tempDist < dist) {
+                            dist = tempDist;
+                            soonBus = bus;
+                        }
                     }
-                }
 
+                }
             }
 
             line.setDist(dist);

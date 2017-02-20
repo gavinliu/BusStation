@@ -1,6 +1,7 @@
 package cn.gavinliu.bus.station.ui.choiceline;
 
 import cn.gavinliu.bus.station.entity.Line;
+import cn.gavinliu.bus.station.widget.BaseAdapter;
 import cn.gavinliu.bus.station.widget.BaseListFragment;
 import cn.gavinliu.bus.station.widget.BaseViewHolder;
 

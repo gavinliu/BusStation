@@ -2,6 +2,7 @@ package cn.gavinliu.bus.station.network;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import cn.gavinliu.bus.station.entity.Bus;
 import cn.gavinliu.bus.station.entity.Line;
@@ -44,19 +45,21 @@ public class BusQueryServiceImpl {
         return mService.getStationNameList(key).flatMap(new HttpResultFunc<List<String>>());
     }
 
-    public Observable<Line> updateStationForLine(List<Line> lines) {
-        return Observable.from(lines)
+    public Observable<Line> updateStationForLine(Line line) {
+        return Observable.just(line)
                 .flatMap(new Func1<Line, Observable<Line>>() {
                     @Override
                     public Observable<Line> call(Line line) {
-                        line.setStations(getStationList(line.getId()));
+                        if (line.getStations() == null) {
+                            line.setStations(getStationList(line.getId()));
+                        }
                         return Observable.just(line);
                     }
                 });
     }
 
-    public Observable<Line> updateBusForLine(List<Line> lines) {
-        return Observable.from(lines)
+    public Observable<Line> updateBusForLine(Line line) {
+        return Observable.just(line)
                 .flatMap(new Func1<Line, Observable<Line>>() {
                     @Override
                     public Observable<Line> call(Line line) {

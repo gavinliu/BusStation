@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +59,6 @@ public class PlanDetailActivity extends BaseActivity {
             mPlan = (Plan) intent.getSerializableExtra("PLAN");
 
             mLines = mPlan.getLines();
-            updateStation(mLines);
             updateBus(mLines);
             for (Line line : mLines) {
                 Log.d(TAG, line.getName() + " " + line);
@@ -84,39 +84,19 @@ public class PlanDetailActivity extends BaseActivity {
         mSubscriptions.clear();
     }
 
-    private void updateStation(List<Line> lines) {
-        Subscription subscription = BusQueryServiceImpl.getInstance().updateStationForLine(lines)
-                .subscribeOn(Schedulers.io())
-                .unsubscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Line>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(Line line) {
-                        if (line.getStations() != null) {
-                            Log.d(TAG, line.getName() + ":" + line.getStations().get(0).getName() + " " + line);
-                        }
-                    }
-                });
-
-        mSubscriptions.add(subscription);
-    }
-
     private void updateBus(final List<Line> lines) {
-        Subscription subscription = Observable.interval(0, 5, TimeUnit.SECONDS)
+        Subscription subscription = Observable.interval(0, 1, TimeUnit.SECONDS)
                 .flatMap(new Func1<Long, Observable<Line>>() {
                     @Override
                     public Observable<Line> call(Long aLong) {
-                        return BusQueryServiceImpl.getInstance().updateBusForLine(lines);
+                        return BusQueryServiceImpl.getInstance().updateBusForLine(lines.get((int) (aLong % lines.size())));
+                    }
+                })
+                .delay(1, TimeUnit.SECONDS)
+                .flatMap(new Func1<Line, Observable<Line>>() {
+                    @Override
+                    public Observable<Line> call(Line line) {
+                        return BusQueryServiceImpl.getInstance().updateStationForLine(line);
                     }
                 })
                 .flatMap(new CalculateSoonBus())
@@ -131,7 +111,9 @@ public class PlanDetailActivity extends BaseActivity {
 
                     @Override
                     public void onError(Throwable e) {
-
+                        e.printStackTrace();
+                        Log.d(TAG, "错误:");
+                        Toast.makeText(getApplicationContext(), "获取失败", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override

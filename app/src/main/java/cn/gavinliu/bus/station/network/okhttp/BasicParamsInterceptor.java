@@ -28,9 +28,14 @@ public class BasicParamsInterceptor implements Interceptor {
     private List<String> headerLinesList = new ArrayList<>();
 
     private BasicParamsInterceptor() {
-        headerParamsMap.put("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.82 Safari/537.36");
         headerParamsMap.put("Host", "www.zhbuswx.com");
+        headerParamsMap.put("Proxy-Connection", "keep-alive");
+        headerParamsMap.put("Accept", "application/json, text/javascript, */*; q=0.01");
+        headerParamsMap.put("X-Requested-With", "X-Requested-With");
+        headerParamsMap.put("User-Agent", "Mozilla/5.0 (Linux; Android 5.1; MX5 Build/LMY47I; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/53.0.2785.49 Mobile MQQBrowser/6.2 TBS/043024 Safari/537.36 MicroMessenger/6.5.4.1000 NetType/WIFI Language/zh_CN");
         headerParamsMap.put("Referer", "http://www.zhbuswx.com/busline/BusQuery.html?v=1.98");
+        headerParamsMap.put("Accept-Encoding", "gzip, deflate");
+        headerParamsMap.put("Accept-Language", "zh-CN,en-US;q=0.8");
     }
 
     @Override
