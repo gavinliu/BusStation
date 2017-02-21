@@ -15,7 +15,7 @@ public class ActivityRouter {
 
     public static void startPlanDetail(Activity activity, Plan plan) {
         Intent intent = new Intent(activity, PlanDetailActivity.class);
-        intent.putExtra("PLAN", plan);
+        intent.putExtra(PlanDetailActivity.KEY_PLAN, plan);
         activity.startActivity(intent);
     }
 

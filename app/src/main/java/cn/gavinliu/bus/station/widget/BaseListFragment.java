@@ -44,7 +44,7 @@ public abstract class BaseListFragment<E, VH extends RecyclerView.ViewHolder> ex
         mAdapter = createAdapter();
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.addItemDecoration(new ItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
+        mRecyclerView.addItemDecoration(new ItemDecoration(getContext()));
     }
 
     @Override
