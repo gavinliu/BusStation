@@ -11,12 +11,12 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import cn.gavinliu.bus.station.R;
 import cn.gavinliu.bus.station.network.BusQueryServiceImpl;
 import cn.gavinliu.bus.station.ui.choiceline.ChoiceLineActivity;
 import cn.gavinliu.bus.station.widget.BaseAdapter;
 import cn.gavinliu.bus.station.widget.BaseListFragment;
 import cn.gavinliu.bus.station.widget.BaseViewHolder;
-import cn.gavinliu.zhuhai.station.R;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;

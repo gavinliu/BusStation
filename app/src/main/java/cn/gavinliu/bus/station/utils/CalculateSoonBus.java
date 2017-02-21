@@ -2,7 +2,10 @@ package cn.gavinliu.bus.station.utils;
 
 import android.util.Log;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import cn.gavinliu.bus.station.entity.Bus;
 import cn.gavinliu.bus.station.entity.Line;
@@ -61,6 +64,10 @@ public class CalculateSoonBus implements Func1<Line, Observable<Line>> {
                 Log.d(TAG, "***DIST: " + dist + ", " + soonBus.getBusNumber() + " " + soonBus.getCurrentStation());
             }
         }
+
+        long time = System.currentTimeMillis();
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+        line.setUpdateTime(sdf.format(new Date(time)));
 
         return Observable.just(line);
     }

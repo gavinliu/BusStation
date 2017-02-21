@@ -19,6 +19,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.gavinliu.bus.station.R;
 import cn.gavinliu.bus.station.db.Plan;
 import cn.gavinliu.bus.station.entity.Line;
 import cn.gavinliu.bus.station.network.BusQueryServiceImpl;
@@ -27,7 +28,6 @@ import cn.gavinliu.bus.station.utils.DbUtils;
 import cn.gavinliu.bus.station.widget.BaseAdapter;
 import cn.gavinliu.bus.station.widget.BaseListFragment;
 import cn.gavinliu.bus.station.widget.BaseViewHolder;
-import cn.gavinliu.zhuhai.station.R;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;

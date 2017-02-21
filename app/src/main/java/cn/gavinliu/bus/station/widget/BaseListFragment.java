@@ -11,7 +11,8 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import cn.gavinliu.zhuhai.station.R;
+import cn.gavinliu.bus.station.R;
+
 
 /**
  * Created by gavin on 2017/2/18.

@@ -4,8 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
+import cn.gavinliu.bus.station.R;
 import cn.gavinliu.bus.station.widget.BaseActivity;
-import cn.gavinliu.zhuhai.station.R;
 
 /**
  * Created by gavin on 2017/2/17.

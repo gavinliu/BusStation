@@ -9,10 +9,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import cn.gavinliu.bus.station.R;
 import cn.gavinliu.bus.station.ui.home.planlist.PlanListFragment;
 import cn.gavinliu.bus.station.ui.home.search.SearchFragment;
 import cn.gavinliu.bus.station.widget.BaseActivity;
-import cn.gavinliu.zhuhai.station.R;
 
 public class HomeActivity extends BaseActivity {
 

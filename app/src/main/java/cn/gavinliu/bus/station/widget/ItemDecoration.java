@@ -8,7 +8,8 @@ import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import cn.gavinliu.zhuhai.station.R;
+import cn.gavinliu.bus.station.R;
+
 
 /**
  * Created by gavin on 2017/2/20.

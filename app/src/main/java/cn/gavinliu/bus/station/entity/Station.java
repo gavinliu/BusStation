@@ -8,6 +8,8 @@ import java.io.Serializable;
 
 public class Station implements Serializable {
 
+    private static final long serialVersionUID = 3758411441754109245L;
+
     private String Id;
 
     private String Name;

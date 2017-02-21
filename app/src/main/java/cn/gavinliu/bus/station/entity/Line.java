@@ -9,6 +9,8 @@ import java.util.List;
 
 public class Line implements Serializable {
 
+    private static final long serialVersionUID = -7252764309163840473L;
+
     private String Id;
 
     private String Name;
@@ -45,6 +47,8 @@ public class Line implements Serializable {
     private Bus mSoonBus;
 
     private int mDist = -1;
+
+    private String mUpdateTime;
     // <----
 
     public String getId() {
@@ -191,6 +195,13 @@ public class Line implements Serializable {
         mDist = dist;
     }
 
+    public String getUpdateTime() {
+        return mUpdateTime;
+    }
+
+    public void setUpdateTime(String updateTime) {
+        mUpdateTime = updateTime;
+    }
 
     //    @Override
 //    public String toString() {

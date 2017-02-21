@@ -8,6 +8,8 @@ import java.io.Serializable;
 
 public class Bus implements Serializable {
 
+    private static final long serialVersionUID = -7927737676241508527L;
+
     private String BusNumber;
 
     private String CurrentStation;
