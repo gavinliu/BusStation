@@ -17,6 +17,8 @@ import cn.gavinliu.bus.station.entity.Line;
 @Table("plans")
 public class Plan implements Serializable {
 
+    private static final long serialVersionUID = 2131978516755871627L;
+
     @PrimaryKey(AssignType.AUTO_INCREMENT)
     @Column("_id")
     private int id;

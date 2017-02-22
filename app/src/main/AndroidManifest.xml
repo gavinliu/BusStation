@@ -28,6 +28,10 @@
 
         <activity android:name="cn.gavinliu.bus.station.ui.plandetail.PlanDetailActivity" />
 
+        <activity
+            android:name=".ui.setting.SettingActivity"
+            android:label="@string/setting" />
+
         <service
             android:name="cn.gavinliu.bus.station.service.AlarmService"
             android:label="@string/app_name" />

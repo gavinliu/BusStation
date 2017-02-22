@@ -8,6 +8,7 @@ import cn.gavinliu.bus.station.entity.Line;
 import cn.gavinliu.bus.station.ui.choiceline.ChoiceLineActivity;
 import cn.gavinliu.bus.station.ui.linedetail.LineDetailActivity;
 import cn.gavinliu.bus.station.ui.plandetail.PlanDetailActivity;
+import cn.gavinliu.bus.station.ui.setting.SettingActivity;
 
 /**
  * Created by gavin on 2017/2/19.
@@ -30,6 +31,11 @@ public class ActivityRouter {
     public static void startLineDetail(Activity activity, Line line) {
         Intent intent = new Intent(activity, LineDetailActivity.class);
         intent.putExtra(LineDetailActivity.KEY_LINE, line);
+        activity.startActivity(intent);
+    }
+
+    public static void startSetting(Activity activity) {
+        Intent intent = new Intent(activity, SettingActivity.class);
         activity.startActivity(intent);
     }
 

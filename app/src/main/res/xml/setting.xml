@@ -1,4 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<android.support.v7.preference.PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-</PreferenceScreen>
+    <android.support.v7.preference.PreferenceCategory
+        android:title="功能">
+
+        <android.support.v7.preference.CheckBoxPreference
+            android:defaultValue="false"
+            android:key="isNotify"
+            android:title="到站提醒"/>
+
+    </android.support.v7.preference.PreferenceCategory>
+
+    <android.support.v7.preference.PreferenceCategory
+        android:title="关于">
+
+        <android.support.v7.preference.PreferenceScreen
+            android:key="license"
+            android:title="免责声明"/>
+
+        <android.support.v7.preference.PreferenceScreen
+            android:key="openSource"
+            android:summary="Power by GavinLiu"
+            android:title="开源"/>
+
+    </android.support.v7.preference.PreferenceCategory>
+
+</android.support.v7.preference.PreferenceScreen>
