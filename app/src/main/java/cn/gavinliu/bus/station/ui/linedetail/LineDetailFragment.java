@@ -1,30 +1,27 @@
 package cn.gavinliu.bus.station.ui.linedetail;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.squareup.otto.Subscribe;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import cn.gavinliu.bus.station.R;
 import cn.gavinliu.bus.station.entity.Bus;
 import cn.gavinliu.bus.station.entity.Line;
 import cn.gavinliu.bus.station.entity.Station;
-import cn.gavinliu.bus.station.network.BusQueryServiceImpl;
+import cn.gavinliu.bus.station.service.AlarmService;
+import cn.gavinliu.bus.station.utils.EventCaster;
 import cn.gavinliu.bus.station.widget.BaseAdapter;
 import cn.gavinliu.bus.station.widget.BaseListFragment;
 import cn.gavinliu.bus.station.widget.BaseViewHolder;
-import rx.Observable;
-import rx.Subscriber;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
 /**
@@ -32,6 +29,8 @@ import rx.subscriptions.CompositeSubscription;
  */
 
 public class LineDetailFragment extends BaseListFragment<Station, BaseViewHolder> {
+
+    private static final String TAG = LineDetailFragment.class.getSimpleName();
 
     public static final String KEY_LINE = "KEY_LINE";
 
@@ -53,55 +52,32 @@ public class LineDetailFragment extends BaseListFragment<Station, BaseViewHolder
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mSubscriptions = new CompositeSubscription();
+        EventCaster.getInstance().register(this);
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        updateBus();
+    public void onDestroy() {
+        super.onDestroy();
+        EventCaster.getInstance().unregister(this);
+        Intent intent = new Intent(getActivity(), AlarmService.class);
+        getActivity().stopService(intent);
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        mSubscriptions.clear();
-    }
-
-    private void updateBus() {
-        Subscription subscription = Observable.interval(0, 5, TimeUnit.SECONDS)
-                .flatMap(new Func1<Long, Observable<Line>>() {
-                    @Override
-                    public Observable<Line> call(Long aLong) {
-                        return BusQueryServiceImpl.getInstance().updateBusForLine(mLine);
-                    }
-                })
-                .subscribeOn(Schedulers.io())
-                .unsubscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Line>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        Toast.makeText(getContext(), "获取失败", Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onNext(Line line) {
-                        mAdapter.setBuses(line.getBuses());
-                    }
-                });
-
-        mSubscriptions.add(subscription);
+    @Subscribe
+    public void updateBus(Line line) {
+        if (line == null) return;
+        Log.d(TAG, "UpdateBus");
+        mAdapter.setBuses(line.getBuses());
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        Intent intent = new Intent(getActivity(), AlarmService.class);
+        intent.putExtra("LINE", mLine);
+        getActivity().startService(intent);
+
         if (mLine != null && mLine.getStations() != null) {
             setListData(mLine.getStations());
         }
