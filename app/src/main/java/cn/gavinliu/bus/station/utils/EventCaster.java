@@ -2,6 +2,7 @@ package cn.gavinliu.bus.station.utils;
 
 
 import com.squareup.otto.Bus;
+import com.squareup.otto.ThreadEnforcer;
 
 /**
  * Created by Gavin on 17-2-23.
@@ -20,7 +21,7 @@ public class EventCaster {
     }
 
     private EventCaster() {
-        bus = new Bus();
+        bus = new Bus(ThreadEnforcer.ANY);
     }
 
 

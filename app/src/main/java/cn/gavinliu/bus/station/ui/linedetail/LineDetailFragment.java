@@ -17,6 +17,7 @@ import cn.gavinliu.bus.station.R;
 import cn.gavinliu.bus.station.entity.Bus;
 import cn.gavinliu.bus.station.entity.Line;
 import cn.gavinliu.bus.station.entity.Station;
+import cn.gavinliu.bus.station.service.AlarmManager;
 import cn.gavinliu.bus.station.service.AlarmService;
 import cn.gavinliu.bus.station.utils.EventCaster;
 import cn.gavinliu.bus.station.widget.BaseAdapter;
@@ -49,6 +50,11 @@ public class LineDetailFragment extends BaseListFragment<Station, BaseViewHolder
     private Adapter mAdapter;
 
     @Override
+    protected int fragmentLayoutID() {
+        return R.layout.fragment_linedetail;
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mSubscriptions = new CompositeSubscription();
@@ -63,6 +69,23 @@ public class LineDetailFragment extends BaseListFragment<Station, BaseViewHolder
         getActivity().stopService(intent);
     }
 
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        view.findViewById(R.id.alarm).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), AlarmService.class);
+                intent.putExtra(AlarmService.KEY_ACTION, AlarmService.ACTION_LINE_ALARM);
+                intent.putExtra("LINE", mLine);
+                getActivity().startService(intent);
+
+                AlarmManager.getInstance().setLineId(mLine.getId());
+                Log.d(TAG, AlarmManager.getInstance().getBusNumber() + " " + AlarmManager.getInstance().getStationName());
+            }
+        });
+    }
+
     @Subscribe
     public void updateBus(Line line) {
         if (line == null) return;
@@ -75,6 +98,7 @@ public class LineDetailFragment extends BaseListFragment<Station, BaseViewHolder
         super.onActivityCreated(savedInstanceState);
 
         Intent intent = new Intent(getActivity(), AlarmService.class);
+        intent.putExtra(AlarmService.KEY_ACTION, AlarmService.ACTION_LINE_DETAIL);
         intent.putExtra("LINE", mLine);
         getActivity().startService(intent);
 
@@ -114,10 +138,10 @@ public class LineDetailFragment extends BaseListFragment<Station, BaseViewHolder
 
         @Override
         public void onBindViewHolder(Holder holder, int position) {
-            Station station = getItem(position);
+            final Station station = getItem(position);
             holder.mTitleText.setText(station.getName());
 
-            StringBuilder sb = new StringBuilder();
+            final StringBuilder sb = new StringBuilder();
 
             if (mBuses != null) {
                 for (Bus bus : mBuses) {
@@ -131,6 +155,19 @@ public class LineDetailFragment extends BaseListFragment<Station, BaseViewHolder
             }
 
             holder.mContentText.setText(sb.toString());
+            holder.mContentText.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AlarmManager.getInstance().setBusNumber(sb.toString());
+                }
+            });
+
+            holder.mAlarmText.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AlarmManager.getInstance().setStationName(station.getName());
+                }
+            });
         }
     }
 
@@ -138,11 +175,13 @@ public class LineDetailFragment extends BaseListFragment<Station, BaseViewHolder
 
         private TextView mTitleText;
         private TextView mContentText;
+        private TextView mAlarmText;
 
         public Holder(View itemView) {
             super(itemView);
             mTitleText = (TextView) itemView.findViewById(R.id.title);
             mContentText = (TextView) itemView.findViewById(R.id.content);
+            mAlarmText = (TextView) itemView.findViewById(R.id.alarm);
         }
     }
 
