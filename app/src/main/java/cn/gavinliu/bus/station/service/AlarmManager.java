@@ -1,5 +1,8 @@
 package cn.gavinliu.bus.station.service;
 
+import android.media.RingtoneManager;
+import android.view.WindowManager;
+
 /**
  * Created by Gavin on 17-2-24.
  */
@@ -9,6 +12,9 @@ public class AlarmManager {
     private String lineId;
     private String busNumber;
     private String stationName;
+
+    private WindowManager mWindowManager;
+    private RingtoneManager mRingtoneManager;
 
     private static AlarmManager sInstance;
 

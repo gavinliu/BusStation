@@ -10,7 +10,6 @@ import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -58,7 +57,7 @@ public class ChoiceLineFragment extends BaseListFragment<Line, BaseViewHolder> {
 
     private AlertDialog mDialog;
 
-    private Button mButton;
+    private View mButton;
 
     private EditText mEditText;
 
@@ -72,7 +71,7 @@ public class ChoiceLineFragment extends BaseListFragment<Line, BaseViewHolder> {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mButton = (Button) view.findViewById(R.id.start);
+        mButton = view.findViewById(R.id.start);
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

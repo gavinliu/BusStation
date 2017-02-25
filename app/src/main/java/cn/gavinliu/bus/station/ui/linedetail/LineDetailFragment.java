@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.otto.Subscribe;
 
@@ -20,10 +21,10 @@ import cn.gavinliu.bus.station.entity.Station;
 import cn.gavinliu.bus.station.service.AlarmManager;
 import cn.gavinliu.bus.station.service.AlarmService;
 import cn.gavinliu.bus.station.utils.EventCaster;
+import cn.gavinliu.bus.station.utils.PermissionUtils;
 import cn.gavinliu.bus.station.widget.BaseAdapter;
 import cn.gavinliu.bus.station.widget.BaseListFragment;
 import cn.gavinliu.bus.station.widget.BaseViewHolder;
-import rx.subscriptions.CompositeSubscription;
 
 /**
  * Created by gavin on 2017/2/20.
@@ -44,9 +45,7 @@ public class LineDetailFragment extends BaseListFragment<Station, BaseViewHolder
         return fragment;
     }
 
-    private CompositeSubscription mSubscriptions;
     private Line mLine;
-
     private Adapter mAdapter;
 
     @Override
@@ -57,7 +56,6 @@ public class LineDetailFragment extends BaseListFragment<Station, BaseViewHolder
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mSubscriptions = new CompositeSubscription();
         EventCaster.getInstance().register(this);
     }
 
@@ -66,7 +64,8 @@ public class LineDetailFragment extends BaseListFragment<Station, BaseViewHolder
         super.onDestroy();
         EventCaster.getInstance().unregister(this);
         Intent intent = new Intent(getActivity(), AlarmService.class);
-        getActivity().stopService(intent);
+        intent.putExtra(AlarmService.KEY_ACTION, AlarmService.ACTION_DETAIL_FINISH);
+        getActivity().startService(intent);
     }
 
     @Override
@@ -75,15 +74,28 @@ public class LineDetailFragment extends BaseListFragment<Station, BaseViewHolder
         view.findViewById(R.id.alarm).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), AlarmService.class);
-                intent.putExtra(AlarmService.KEY_ACTION, AlarmService.ACTION_LINE_ALARM);
-                intent.putExtra("LINE", mLine);
-                getActivity().startService(intent);
+                if (PermissionUtils.checkPermission(getActivity())) {
+                    Intent intent = new Intent(getActivity(), AlarmService.class);
+                    intent.putExtra(AlarmService.KEY_ACTION, AlarmService.ACTION_LINE_ALARM);
+                    intent.putExtra("LINE", mLine);
+                    getActivity().startService(intent);
 
-                AlarmManager.getInstance().setLineId(mLine.getId());
-                Log.d(TAG, AlarmManager.getInstance().getBusNumber() + " " + AlarmManager.getInstance().getStationName());
+                    AlarmManager.getInstance().setLineId(mLine.getId());
+                    Log.d(TAG, AlarmManager.getInstance().getBusNumber() + " " + AlarmManager.getInstance().getStationName());
+                }
             }
         });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 0) {
+            if (PermissionUtils.checkPermission(getActivity())) {
+                Toast.makeText(getContext(), "授权失败", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(), "授权成功", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     @Subscribe

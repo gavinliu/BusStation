@@ -2,19 +2,29 @@ package cn.gavinliu.bus.station.service;
 
 import android.app.Service;
 import android.content.Intent;
+import android.graphics.PixelFormat;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.WindowManager;
 
 import com.squareup.otto.Subscribe;
 
 import java.util.concurrent.TimeUnit;
 
+import cn.gavinliu.bus.station.R;
 import cn.gavinliu.bus.station.entity.Line;
 import cn.gavinliu.bus.station.network.BusQueryServiceImpl;
 import cn.gavinliu.bus.station.utils.AlarmChecker;
 import cn.gavinliu.bus.station.utils.EventCaster;
+import cn.gavinliu.bus.station.utils.ScreenUtils;
+import cn.gavinliu.bus.station.widget.AlertLayout;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
@@ -34,21 +44,31 @@ public class AlarmService extends Service {
 
     public static final int ACTION_LINE_ALARM = 1;
     public static final int ACTION_LINE_DETAIL = 2;
+    public static final int ACTION_DETAIL_FINISH = 3;
+
+    private Handler mHandler;
+
+    private Line mLine;
 
     private Subscription mAlarmChecker;
     private Subscription mLineDetail;
-    private Line mLine;
+
+    private Ringtone mRingtone;
+    private WindowManager mWindowManager;
+
+    private AlertLayout mAlertLayout;
 
     private AlarmManager mAlarmManager;
-
-    private Handler mHandler = new Handler(getMainLooper());
 
     @Override
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "onCreate");
+        mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         EventCaster.getInstance().register(this);
         mAlarmManager = AlarmManager.getInstance();
+
+        mHandler = new Handler();
     }
 
     @Override
@@ -56,13 +76,6 @@ public class AlarmService extends Service {
         super.onDestroy();
         EventCaster.getInstance().unregister(this);
         Log.d(TAG, "onDestroy");
-    }
-
-    @Subscribe
-    public void onAlarmFinish(AlarmChecker.AlarmCheckerEvent event) {
-        Log.d(TAG, "onAlarmFinish");
-
-        AlarmManager.getInstance().finish();
     }
 
     @Nullable
@@ -100,9 +113,55 @@ public class AlarmService extends Service {
                 }
                 break;
             }
+
+            case ACTION_DETAIL_FINISH: {
+                if (mLineDetail != null) {
+                    mLineDetail.unsubscribe();
+                }
+
+                if (mAlarmManager.getLineId() == null) {
+                    stopSelf();
+                }
+                break;
+            }
+
+
         }
 
-        return super.onStartCommand(intent, flags, startId);
+        return START_NOT_STICKY;
+    }
+
+    @Subscribe
+    public void onAlarmFinish(AlarmChecker.AlarmCheckerEvent event) {
+        Log.d(TAG, "onAlarmFinish");
+
+        if (mAlarmChecker != null) {
+            mAlarmChecker.unsubscribe();
+        }
+
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                showAlertLayout();
+                AlarmManager.getInstance().finish();
+            }
+        });
+    }
+
+    private void showAlertLayout() {
+        if (mRingtone == null) createRingtone();
+
+        mRingtone.play();
+
+        if (mAlertLayout == null) createAlertLayout();
+        WindowManager.LayoutParams layoutParams = createWindowLayoutParams();
+
+        mWindowManager.addView(mAlertLayout, layoutParams);
+    }
+
+    private void closeAlertLayout() {
+        if (mRingtone != null) mRingtone.stop();
+        mWindowManager.removeView(mAlertLayout);
     }
 
     private void updateBus(final Line line) {
@@ -166,5 +225,44 @@ public class AlarmService extends Service {
                         EventCaster.getInstance().post(line);
                     }
                 });
+    }
+
+    private void createAlertLayout() {
+        mAlertLayout = (AlertLayout) LayoutInflater.from(getApplicationContext()).inflate(R.layout.alert_layout, null, false);
+        mAlertLayout.setItemListener(new AlertLayout.ItemListener() {
+            @Override
+            public void onCloseClick() {
+                closeAlertLayout();
+            }
+        });
+    }
+
+    private void createRingtone() {
+        Uri alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+        mRingtone = RingtoneManager.getRingtone(getApplicationContext(), alert);
+    }
+
+    private WindowManager.LayoutParams createWindowLayoutParams() {
+        WindowManager.LayoutParams windowLayoutParams = new WindowManager.LayoutParams();
+        windowLayoutParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
+        windowLayoutParams.format = PixelFormat.RGBA_8888;
+        windowLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE; // 不能抢占聚焦点
+        windowLayoutParams.flags = windowLayoutParams.flags | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH;
+        windowLayoutParams.flags = windowLayoutParams.flags | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS;
+        windowLayoutParams.flags = windowLayoutParams.flags | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
+        windowLayoutParams.flags = windowLayoutParams.flags | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD;
+        windowLayoutParams.flags = windowLayoutParams.flags | WindowManager.LayoutParams.FLAG_FULLSCREEN;
+        windowLayoutParams.flags = windowLayoutParams.flags | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
+        windowLayoutParams.alpha = 1.0f;
+        windowLayoutParams.gravity = Gravity.START | Gravity.TOP;
+
+        ScreenUtils screenUtils = ScreenUtils.getInstance();
+
+        windowLayoutParams.x = 20;
+        windowLayoutParams.y = screenUtils.getHeight() / 4;
+        windowLayoutParams.width = screenUtils.getWidth() - 20 * 2;
+        windowLayoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        return windowLayoutParams;
     }
 }
