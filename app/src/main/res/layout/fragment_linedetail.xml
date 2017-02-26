@@ -24,15 +24,14 @@
         android:layout_gravity="center"
         android:visibility="gone" />
 
-    <Button
+    <ImageButton
         android:id="@+id/alarm"
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:layout_gravity="bottom|center_horizontal"
         android:layout_marginBottom="15dp"
         android:background="@drawable/bg_choiceline_btn"
-        android:text="提醒"
-        android:visibility="visible"
-        android:textColor="#fff" />
+        android:src="@mipmap/ic_fb_alarm"
+        android:visibility="visible" />
 
 </FrameLayout>

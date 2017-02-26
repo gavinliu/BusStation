@@ -1,5 +1,8 @@
 package cn.gavinliu.bus.station.service;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.PixelFormat;
@@ -9,6 +12,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -16,11 +20,14 @@ import android.view.WindowManager;
 
 import com.squareup.otto.Subscribe;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import cn.gavinliu.bus.station.R;
+import cn.gavinliu.bus.station.entity.Bus;
 import cn.gavinliu.bus.station.entity.Line;
 import cn.gavinliu.bus.station.network.BusQueryServiceImpl;
+import cn.gavinliu.bus.station.ui.linedetail.LineDetailActivity;
 import cn.gavinliu.bus.station.utils.AlarmChecker;
 import cn.gavinliu.bus.station.utils.EventCaster;
 import cn.gavinliu.bus.station.utils.ScreenUtils;
@@ -46,15 +53,19 @@ public class AlarmService extends Service {
     public static final int ACTION_LINE_DETAIL = 2;
     public static final int ACTION_DETAIL_FINISH = 3;
 
+    private static final int NOTIFICATION_ID = 100;
+
     private Handler mHandler;
 
     private Line mLine;
-
-    private Subscription mAlarmChecker;
     private Subscription mLineDetail;
+
+    private Line mCheckerLine;
+    private Subscription mAlarmChecker;
 
     private Ringtone mRingtone;
     private WindowManager mWindowManager;
+    private NotificationManager mNotificationManager;
 
     private AlertLayout mAlertLayout;
 
@@ -64,18 +75,20 @@ public class AlarmService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "onCreate");
-        mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         EventCaster.getInstance().register(this);
         mAlarmManager = AlarmManager.getInstance();
 
         mHandler = new Handler();
+        mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        EventCaster.getInstance().unregister(this);
         Log.d(TAG, "onDestroy");
+        EventCaster.getInstance().unregister(this);
+        AlarmManager.getInstance().finish();
     }
 
     @Nullable
@@ -92,6 +105,7 @@ public class AlarmService extends Service {
             case ACTION_LINE_ALARM: {
                 Line line = (Line) intent.getSerializableExtra("LINE");
                 if (line == null) break;
+                mCheckerLine = line;
 
                 if (mLine != null && mLine.getId().equals(line.getId()) && mLineDetail != null) {
                     mLineDetail.unsubscribe();
@@ -100,6 +114,8 @@ public class AlarmService extends Service {
                 Log.d(TAG, "ACTION_LINE_ALARM");
 
                 startAlarm(line);
+                Notification notification = createNotification();
+                startForeground(NOTIFICATION_ID, notification);
                 break;
             }
 
@@ -119,7 +135,7 @@ public class AlarmService extends Service {
                     mLineDetail.unsubscribe();
                 }
 
-                if (mAlarmManager.getLineId() == null) {
+                if (!mAlarmManager.alarmEnable()) {
                     stopSelf();
                 }
                 break;
@@ -142,8 +158,24 @@ public class AlarmService extends Service {
         mHandler.post(new Runnable() {
             @Override
             public void run() {
+                mNotificationManager.cancel(NOTIFICATION_ID);
+                stopForeground(true);
                 showAlertLayout();
                 AlarmManager.getInstance().finish();
+            }
+        });
+    }
+
+    @Subscribe
+    public void updateNotification(final Line line) {
+        if (line == null) return;
+
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (mAlarmManager.alarmEnable()) {
+                    mNotificationManager.notify(NOTIFICATION_ID, createNotification());
+                }
             }
         });
     }
@@ -258,11 +290,37 @@ public class AlarmService extends Service {
 
         ScreenUtils screenUtils = ScreenUtils.getInstance();
 
-        windowLayoutParams.x = 20;
-        windowLayoutParams.y = screenUtils.getHeight() / 4;
-        windowLayoutParams.width = screenUtils.getWidth() - 20 * 2;
-        windowLayoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        windowLayoutParams.x = getResources().getDimensionPixelSize(R.dimen.alert_layout_margin_LR);
+        windowLayoutParams.y = screenUtils.getHeight() / 3;
+        windowLayoutParams.width = screenUtils.getWidth() - getResources().getDimensionPixelSize(R.dimen.alert_layout_margin_LR) * 2;
+        windowLayoutParams.height = getResources().getDimensionPixelSize(R.dimen.alert_layout_height);
 
         return windowLayoutParams;
+    }
+
+    private Notification createNotification() {
+        String content = null;
+
+        if (mCheckerLine != null && mCheckerLine.getBuses() != null) {
+            List<Bus> buses = mCheckerLine.getBuses();
+            for (Bus bus : buses) {
+                if (bus.getBusNumber().equals(AlarmManager.getInstance().getBusNumber())) {
+                    content = bus.getBusNumber() + " 已经开到 " + bus.getCurrentStation();
+                }
+            }
+        }
+
+        return new NotificationCompat.Builder(getApplication())
+                .setContentTitle("到站提醒: " + AlarmManager.getInstance().getStationName())
+                .setContentText(content)
+                .setSmallIcon(R.mipmap.ic_notification)
+                .setContentIntent(createContentIntent())
+                .build();
+    }
+
+    private PendingIntent createContentIntent() {
+        Intent intent = new Intent(this, LineDetailActivity.class);
+        intent.putExtra(LineDetailActivity.KEY_LINE, mCheckerLine);
+        return PendingIntent.getActivity(this, NOTIFICATION_ID, intent, PendingIntent.FLAG_CANCEL_CURRENT);
     }
 }

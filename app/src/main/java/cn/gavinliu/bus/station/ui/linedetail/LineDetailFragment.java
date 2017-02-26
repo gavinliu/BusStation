@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +22,7 @@ import cn.gavinliu.bus.station.entity.Line;
 import cn.gavinliu.bus.station.entity.Station;
 import cn.gavinliu.bus.station.service.AlarmManager;
 import cn.gavinliu.bus.station.service.AlarmService;
+import cn.gavinliu.bus.station.utils.AlarmChecker;
 import cn.gavinliu.bus.station.utils.EventCaster;
 import cn.gavinliu.bus.station.utils.PermissionUtils;
 import cn.gavinliu.bus.station.widget.BaseAdapter;
@@ -74,6 +77,11 @@ public class LineDetailFragment extends BaseListFragment<Station, BaseViewHolder
         view.findViewById(R.id.alarm).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (AlarmManager.getInstance().getBusNumber() == null || AlarmManager.getInstance().getStationName() == null) {
+                    Toast.makeText(getContext(), "选择车辆和要提醒的站台", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 if (PermissionUtils.checkPermission(getActivity())) {
                     Intent intent = new Intent(getActivity(), AlarmService.class);
                     intent.putExtra(AlarmService.KEY_ACTION, AlarmService.ACTION_LINE_ALARM);
@@ -105,14 +113,22 @@ public class LineDetailFragment extends BaseListFragment<Station, BaseViewHolder
         mAdapter.setBuses(line.getBuses());
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    @Subscribe
+    public void onAlarmFinish(AlarmChecker.AlarmCheckerEvent event) {
+        startServiceLoad();
+    }
 
+    private void startServiceLoad() {
         Intent intent = new Intent(getActivity(), AlarmService.class);
         intent.putExtra(AlarmService.KEY_ACTION, AlarmService.ACTION_LINE_DETAIL);
         intent.putExtra("LINE", mLine);
         getActivity().startService(intent);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        startServiceLoad();
 
         if (mLine != null && mLine.getStations() != null) {
             setListData(mLine.getStations());
@@ -133,7 +149,7 @@ public class LineDetailFragment extends BaseListFragment<Station, BaseViewHolder
         return mAdapter;
     }
 
-    static class Adapter extends BaseAdapter<Station, Holder> {
+    static class Adapter extends BaseAdapter<Station, Holder> implements View.OnClickListener {
 
         List<Bus> mBuses;
 
@@ -153,47 +169,75 @@ public class LineDetailFragment extends BaseListFragment<Station, BaseViewHolder
             final Station station = getItem(position);
             holder.mTitleText.setText(station.getName());
 
-            final StringBuilder sb = new StringBuilder();
-
             if (mBuses != null) {
-                for (Bus bus : mBuses) {
+                int size = mBuses.size();
+                int viewSize = holder.mBusContainer.getChildCount();
+
+                for (int i = size - viewSize; i > 0; i--) {
+                    TextView tv = new TextView(holder.itemView.getContext());
+                    holder.mBusContainer.addView(tv);
+                }
+
+                int viewIndex = 0;
+                for (int j = 0; j < size; j++) {
+                    Bus bus = mBuses.get(j);
                     if (bus.getCurrentStation().equals(station.getName())) {
-                        if (sb.length() > 0) {
-                            sb.append("\n");
+                        TextView tv = (TextView) holder.mBusContainer.getChildAt(viewIndex);
+
+                        tv.setTag(bus);
+                        tv.setText(bus.getBusNumber());
+                        tv.setVisibility(View.VISIBLE);
+                        tv.setOnClickListener(this);
+
+                        if (bus.getBusNumber().equals(AlarmManager.getInstance().getBusNumber())) {
+                            tv.setTextColor(holder.itemView.getResources().getColor(R.color.primary));
+                        } else {
+                            tv.setTextColor(holder.itemView.getResources().getColor(R.color.primary_text));
                         }
-                        sb.append(bus.getBusNumber());
+                        viewIndex++;
                     }
+                }
+
+                viewSize = holder.mBusContainer.getChildCount();
+                for (int i = viewIndex; i < viewSize; i++) {
+                    TextView tv = (TextView) holder.mBusContainer.getChildAt(i);
+                    tv.setVisibility(View.GONE);
                 }
             }
 
-            holder.mContentText.setText(sb.toString());
-            holder.mContentText.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    AlarmManager.getInstance().setBusNumber(sb.toString());
-                }
-            });
+            holder.mAlarmBtn.setTag(station);
+            holder.mAlarmBtn.setOnClickListener(this);
 
-            holder.mAlarmText.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    AlarmManager.getInstance().setStationName(station.getName());
-                }
-            });
+            if (station.getName().equals(AlarmManager.getInstance().getStationName())) {
+                holder.mAlarmBtn.setImageResource(R.mipmap.ic_alarm_select);
+            } else {
+                holder.mAlarmBtn.setImageResource(R.mipmap.ic_alarm_normal);
+            }
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (v.getTag() instanceof Bus) {
+                AlarmManager.getInstance().setBusNumber(((Bus) v.getTag()).getBusNumber());
+            } else if (v.getTag() instanceof Station) {
+                AlarmManager.getInstance().setStationName(((Station) v.getTag()).getName());
+            }
+
+            notifyDataSetChanged();
         }
     }
 
     static class Holder extends BaseViewHolder {
 
         private TextView mTitleText;
-        private TextView mContentText;
-        private TextView mAlarmText;
+        private LinearLayout mBusContainer;
+        private ImageButton mAlarmBtn;
 
         public Holder(View itemView) {
             super(itemView);
             mTitleText = (TextView) itemView.findViewById(R.id.title);
-            mContentText = (TextView) itemView.findViewById(R.id.content);
-            mAlarmText = (TextView) itemView.findViewById(R.id.alarm);
+            mBusContainer = (LinearLayout) itemView.findViewById(R.id.bus_container);
+            mAlarmBtn = (ImageButton) itemView.findViewById(R.id.alarm_btn);
         }
     }
 
