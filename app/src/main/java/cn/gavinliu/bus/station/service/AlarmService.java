@@ -103,6 +103,8 @@ public class AlarmService extends Service {
 
         switch (action) {
             case ACTION_LINE_ALARM: {
+                Log.d(TAG, "ACTION_LINE_ALARM");
+
                 Line line = (Line) intent.getSerializableExtra("LINE");
                 if (line == null) break;
                 mCheckerLine = line;
@@ -111,8 +113,6 @@ public class AlarmService extends Service {
                     mLineDetail.unsubscribe();
                 }
 
-                Log.d(TAG, "ACTION_LINE_ALARM");
-
                 startAlarm(line);
                 Notification notification = createNotification();
                 startForeground(NOTIFICATION_ID, notification);
@@ -120,6 +120,8 @@ public class AlarmService extends Service {
             }
 
             case ACTION_LINE_DETAIL: {
+                Log.d(TAG, "ACTION_LINE_DETAIL");
+
                 Line line = (Line) intent.getSerializableExtra("LINE");
                 if (line == null) break;
                 mLine = line;
@@ -131,6 +133,8 @@ public class AlarmService extends Service {
             }
 
             case ACTION_DETAIL_FINISH: {
+                Log.d(TAG, "ACTION_DETAIL_FINISH");
+
                 if (mLineDetail != null) {
                     mLineDetail.unsubscribe();
                 }

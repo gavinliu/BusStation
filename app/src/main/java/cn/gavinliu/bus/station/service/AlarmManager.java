@@ -36,7 +36,7 @@ public class AlarmManager {
     }
 
     public boolean alarmEnable() {
-        return busNumber != null && stationName != null;
+        return lineId != null && busNumber != null && stationName != null;
     }
 
     public String getBusNumber() {
