@@ -20,9 +20,9 @@ import cn.gavinliu.bus.station.R;
 import cn.gavinliu.bus.station.entity.Bus;
 import cn.gavinliu.bus.station.entity.Line;
 import cn.gavinliu.bus.station.entity.Station;
+import cn.gavinliu.bus.station.event.LineDetailUpdateEvent;
 import cn.gavinliu.bus.station.service.AlarmManager;
 import cn.gavinliu.bus.station.service.AlarmService;
-import cn.gavinliu.bus.station.utils.AlarmChecker;
 import cn.gavinliu.bus.station.utils.EventCaster;
 import cn.gavinliu.bus.station.utils.PermissionUtils;
 import cn.gavinliu.bus.station.widget.BaseAdapter;
@@ -77,18 +77,24 @@ public class LineDetailFragment extends BaseListFragment<Station, BaseViewHolder
         view.findViewById(R.id.alarm).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (AlarmManager.getInstance().getBusNumber() == null || AlarmManager.getInstance().getStationName() == null) {
+                String station = mAdapter.getStation();
+                String busNumber = mAdapter.getBusNumber();
+
+                if (busNumber == null || station == null) {
                     Toast.makeText(getContext(), "选择车辆和要提醒的站台", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 if (PermissionUtils.checkPermission(getActivity())) {
+                    AlarmManager.getInstance().setLineId(mLine.getId());
+                    AlarmManager.getInstance().setBusNumber(busNumber);
+                    AlarmManager.getInstance().setStationName(station);
+
                     Intent intent = new Intent(getActivity(), AlarmService.class);
                     intent.putExtra(AlarmService.KEY_ACTION, AlarmService.ACTION_LINE_ALARM);
                     intent.putExtra("LINE", mLine);
                     getActivity().startService(intent);
 
-                    AlarmManager.getInstance().setLineId(mLine.getId());
                     Log.d(TAG, AlarmManager.getInstance().getBusNumber() + " " + AlarmManager.getInstance().getStationName());
                 }
             }
@@ -111,11 +117,21 @@ public class LineDetailFragment extends BaseListFragment<Station, BaseViewHolder
         if (line == null) return;
         Log.d(TAG, "UpdateBus");
         mAdapter.setBuses(line.getBuses());
+
+        if (mAdapter.getItemCount() == 0) {
+            updateListData(line);
+        }
     }
 
     @Subscribe
-    public void onAlarmFinish(AlarmChecker.AlarmCheckerEvent event) {
+    public void onLineDetailUpdate(LineDetailUpdateEvent event) {
         startServiceLoad();
+
+        if (mAdapter != null) {
+            mAdapter.setStation(AlarmManager.getInstance().getStationName());
+            mAdapter.setBusNumber(AlarmManager.getInstance().getBusNumber());
+            mAdapter.notifyDataSetChanged();
+        }
     }
 
     private void startServiceLoad() {
@@ -130,8 +146,12 @@ public class LineDetailFragment extends BaseListFragment<Station, BaseViewHolder
         super.onActivityCreated(savedInstanceState);
         startServiceLoad();
 
-        if (mLine != null && mLine.getStations() != null) {
-            setListData(mLine.getStations());
+        updateListData(mLine);
+    }
+
+    private void updateListData(Line line) {
+        if (line != null && line.getStations() != null) {
+            setListData(line.getStations());
         }
     }
 
@@ -151,7 +171,10 @@ public class LineDetailFragment extends BaseListFragment<Station, BaseViewHolder
 
     static class Adapter extends BaseAdapter<Station, Holder> implements View.OnClickListener {
 
-        List<Bus> mBuses;
+        private List<Bus> mBuses;
+
+        private String mStation;
+        private String mBusNumber;
 
         public void setBuses(List<Bus> buses) {
             mBuses = buses;
@@ -189,7 +212,7 @@ public class LineDetailFragment extends BaseListFragment<Station, BaseViewHolder
                         tv.setVisibility(View.VISIBLE);
                         tv.setOnClickListener(this);
 
-                        if (bus.getBusNumber().equals(AlarmManager.getInstance().getBusNumber())) {
+                        if (bus.getBusNumber().equals(mBusNumber)) {
                             tv.setTextColor(holder.itemView.getResources().getColor(R.color.primary));
                         } else {
                             tv.setTextColor(holder.itemView.getResources().getColor(R.color.primary_text));
@@ -208,7 +231,7 @@ public class LineDetailFragment extends BaseListFragment<Station, BaseViewHolder
             holder.mAlarmBtn.setTag(station);
             holder.mAlarmBtn.setOnClickListener(this);
 
-            if (station.getName().equals(AlarmManager.getInstance().getStationName())) {
+            if (station.getName().equals(mStation)) {
                 holder.mAlarmBtn.setImageResource(R.mipmap.ic_alarm_select);
             } else {
                 holder.mAlarmBtn.setImageResource(R.mipmap.ic_alarm_normal);
@@ -218,12 +241,28 @@ public class LineDetailFragment extends BaseListFragment<Station, BaseViewHolder
         @Override
         public void onClick(View v) {
             if (v.getTag() instanceof Bus) {
-                AlarmManager.getInstance().setBusNumber(((Bus) v.getTag()).getBusNumber());
+                mBusNumber = ((Bus) v.getTag()).getBusNumber();
             } else if (v.getTag() instanceof Station) {
-                AlarmManager.getInstance().setStationName(((Station) v.getTag()).getName());
+                mStation = ((Station) v.getTag()).getName();
             }
 
             notifyDataSetChanged();
+        }
+
+        public String getStation() {
+            return mStation;
+        }
+
+        public String getBusNumber() {
+            return mBusNumber;
+        }
+
+        public void setStation(String station) {
+            mStation = station;
+        }
+
+        public void setBusNumber(String busNumber) {
+            mBusNumber = busNumber;
         }
     }
 

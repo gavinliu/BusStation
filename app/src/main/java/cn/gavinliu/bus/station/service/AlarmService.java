@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 import cn.gavinliu.bus.station.R;
 import cn.gavinliu.bus.station.entity.Bus;
 import cn.gavinliu.bus.station.entity.Line;
+import cn.gavinliu.bus.station.event.LineDetailUpdateEvent;
 import cn.gavinliu.bus.station.network.BusQueryServiceImpl;
 import cn.gavinliu.bus.station.ui.linedetail.LineDetailActivity;
 import cn.gavinliu.bus.station.utils.AlarmChecker;
@@ -58,7 +59,7 @@ public class AlarmService extends Service {
     private Handler mHandler;
 
     private Line mLine;
-    private Subscription mLineDetail;
+    private Subscription mLineDetailLoader;
 
     private Line mCheckerLine;
     private Subscription mAlarmChecker;
@@ -109,8 +110,8 @@ public class AlarmService extends Service {
                 if (line == null) break;
                 mCheckerLine = line;
 
-                if (mLine != null && mLine.getId().equals(line.getId()) && mLineDetail != null) {
-                    mLineDetail.unsubscribe();
+                if (mLine != null && mLine.getId().equals(line.getId()) && mLineDetailLoader != null) {
+                    mLineDetailLoader.unsubscribe();
                 }
 
                 startAlarm(line);
@@ -135,8 +136,8 @@ public class AlarmService extends Service {
             case ACTION_DETAIL_FINISH: {
                 Log.d(TAG, "ACTION_DETAIL_FINISH");
 
-                if (mLineDetail != null) {
-                    mLineDetail.unsubscribe();
+                if (mLineDetailLoader != null) {
+                    mLineDetailLoader.unsubscribe();
                 }
 
                 if (!mAlarmManager.alarmEnable()) {
@@ -166,6 +167,8 @@ public class AlarmService extends Service {
                 stopForeground(true);
                 showAlertLayout();
                 AlarmManager.getInstance().finish();
+
+                EventCaster.getInstance().post(new LineDetailUpdateEvent());
             }
         });
     }
@@ -201,13 +204,19 @@ public class AlarmService extends Service {
     }
 
     private void updateBus(final Line line) {
-        if (mLineDetail != null) mLineDetail.unsubscribe();
+        if (mLineDetailLoader != null) mLineDetailLoader.unsubscribe();
 
-        mLineDetail = Observable.interval(0, 5, TimeUnit.SECONDS)
+        mLineDetailLoader = Observable.interval(0, 5, TimeUnit.SECONDS)
                 .flatMap(new Func1<Long, Observable<Line>>() {
                     @Override
                     public Observable<Line> call(Long aLong) {
                         return BusQueryServiceImpl.getInstance().updateBusForLine(line);
+                    }
+                })
+                .flatMap(new Func1<Line, Observable<Line>>() {
+                    @Override
+                    public Observable<Line> call(Line line) {
+                        return BusQueryServiceImpl.getInstance().updateStationForLine(line);
                     }
                 })
                 .subscribeOn(Schedulers.io())
@@ -239,6 +248,12 @@ public class AlarmService extends Service {
                     @Override
                     public Observable<Line> call(Long aLong) {
                         return BusQueryServiceImpl.getInstance().updateBusForLine(line);
+                    }
+                })
+                .flatMap(new Func1<Line, Observable<Line>>() {
+                    @Override
+                    public Observable<Line> call(Line line) {
+                        return BusQueryServiceImpl.getInstance().updateStationForLine(line);
                     }
                 })
                 .flatMap(new AlarmChecker())
@@ -327,4 +342,5 @@ public class AlarmService extends Service {
         intent.putExtra(LineDetailActivity.KEY_LINE, mCheckerLine);
         return PendingIntent.getActivity(this, NOTIFICATION_ID, intent, PendingIntent.FLAG_CANCEL_CURRENT);
     }
+
 }

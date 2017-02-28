@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/bg_item_choiceline_layout"
@@ -12,19 +11,17 @@
 
     <TextView
         android:id="@+id/text"
+        style="@style/ListItemTitle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="aaa"
-        android:textSize="18sp"/>
+        android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/content"
+        style="@style/ListItemContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/text"
-        android:layout_marginTop="2dp"
-        android:text="xxx"
-        android:textSize="14sp"/>
+        android:layout_marginTop="2dp" />
 
     <CheckBox
         android:id="@+id/checkbox"
@@ -35,6 +32,6 @@
         android:layout_centerVertical="true"
         android:background="@null"
         android:clickable="false"
-        android:duplicateParentState="false"/>
+        android:duplicateParentState="false" />
 
 </RelativeLayout>
