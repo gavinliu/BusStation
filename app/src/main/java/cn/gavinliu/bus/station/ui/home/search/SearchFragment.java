@@ -43,6 +43,11 @@ public class SearchFragment extends BaseListFragment<String, BaseViewHolder> {
         showTipsView("输入站台关键词，搜索相关站台");
     }
 
+    @Override
+    public String getPageName() {
+        return TAG;
+    }
+
     public void setKeyword(String key) {
         showLoadingView();
 

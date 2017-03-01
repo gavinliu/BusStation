@@ -91,6 +91,11 @@ public class ChoiceLineFragment extends BaseListFragment<Line, BaseViewHolder> {
     }
 
     @Override
+    public String getPageName() {
+        return TAG;
+    }
+
+    @Override
     public void getArguments(Bundle bundle) {
         super.getArguments(bundle);
         if (bundle == null) return;

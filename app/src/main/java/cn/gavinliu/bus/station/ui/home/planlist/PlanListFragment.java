@@ -39,27 +39,16 @@ public class PlanListFragment extends BaseListFragment<Plan, BaseViewHolder> {
     private Plan mTemp;
     private AlertDialog mDialog;
 
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         List<Plan> plans = DbUtils.getPlans();
         setListData(plans);
+    }
+
+    @Override
+    public String getPageName() {
+        return TAG;
     }
 
     private void createDialog() {

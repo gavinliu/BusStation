@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 import com.litesuits.orm.LiteOrm;
+import com.umeng.analytics.MobclickAgent;
 
 import cn.gavinliu.bus.station.utils.ScreenUtils;
 
@@ -27,6 +28,7 @@ public class StationApplication extends Application {
     public void onCreate() {
         super.onCreate();
         ScreenUtils.createInstance(this);
+        MobclickAgent.setDebugMode(true);
     }
 
     public static Context get() {

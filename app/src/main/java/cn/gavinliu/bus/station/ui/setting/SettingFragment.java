@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v7.preference.PreferenceFragmentCompat;
 
 import cn.gavinliu.bus.station.R;
-import cn.gavinliu.bus.station.widget.ItemDecoration;
 
 /**
  * Created by Gavin on 17-2-21.

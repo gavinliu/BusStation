@@ -166,8 +166,8 @@ public class AlarmService extends Service {
                 mNotificationManager.cancel(NOTIFICATION_ID);
                 stopForeground(true);
                 showAlertLayout();
-                AlarmManager.getInstance().finish();
 
+                AlarmManager.getInstance().finish();
                 EventCaster.getInstance().post(new LineDetailUpdateEvent());
             }
         });
@@ -196,6 +196,9 @@ public class AlarmService extends Service {
         WindowManager.LayoutParams layoutParams = createWindowLayoutParams();
 
         mWindowManager.addView(mAlertLayout, layoutParams);
+
+        String content = AlarmManager.getInstance().getStationName() + " 到啦！！！";
+        mAlertLayout.setContent(content);
     }
 
     private void closeAlertLayout() {
@@ -324,7 +327,7 @@ public class AlarmService extends Service {
             List<Bus> buses = mCheckerLine.getBuses();
             for (Bus bus : buses) {
                 if (bus.getBusNumber().equals(AlarmManager.getInstance().getBusNumber())) {
-                    content = bus.getBusNumber() + " 已经开到 " + bus.getCurrentStation();
+                    content = mCheckerLine.getLineNumber() + "：" + bus.getBusNumber() + " 已经开到 " + bus.getCurrentStation();
                 }
             }
         }

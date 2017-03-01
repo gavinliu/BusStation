@@ -3,6 +3,8 @@ package cn.gavinliu.bus.station.widget;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
+import com.umeng.analytics.MobclickAgent;
+
 import cn.gavinliu.bus.station.R;
 import cn.gavinliu.bus.station.utils.ActivityRouter;
 
@@ -28,4 +30,17 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
+    }
+
 }

@@ -4,6 +4,12 @@ def gitSha = 'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim
 def gitTag = 'git describe --tags'.execute([], project.rootDir).text.trim()
 def gitCommitCount = 100 + Integer.parseInt('git rev-list --count HEAD'.execute([], project.rootDir).text.trim())
 
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+def UMENG_APPKEY = properties.getProperty("UMENG_APPKEY")
+
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
@@ -21,6 +27,10 @@ android {
     }
 
     buildTypes {
+        all {
+            manifestPlaceholders = [UMENG_APPKEY_VALUE: UMENG_APPKEY]
+        }
+
         release {
             minifyEnabled true
             proguardFiles 'proguard-rules.pro'
@@ -58,4 +68,6 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-scalars:2.1.0'
 
     compile 'com.squareup:otto:1.3.8'
+
+    compile 'com.umeng.analytics:analytics:latest.integration'
 }

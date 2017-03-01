@@ -112,6 +112,11 @@ public class LineDetailFragment extends BaseListFragment<Station, BaseViewHolder
         }
     }
 
+    @Override
+    public String getPageName() {
+        return TAG;
+    }
+
     @Subscribe
     public void updateBus(Line line) {
         if (line == null) return;

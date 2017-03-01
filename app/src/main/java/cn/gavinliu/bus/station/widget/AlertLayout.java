@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import cn.gavinliu.bus.station.R;
 
@@ -14,6 +15,10 @@ import cn.gavinliu.bus.station.R;
 public class AlertLayout extends FrameLayout {
 
     private ItemListener mItemListener;
+
+    private TextView mTitle;
+
+    private TextView mContent;
 
     public AlertLayout(Context context) {
         super(context);
@@ -42,8 +47,18 @@ public class AlertLayout extends FrameLayout {
                 if (mItemListener != null) mItemListener.onCloseClick();
             }
         });
+
+        mTitle = (TextView) findViewById(R.id.title);
+        mContent = (TextView) findViewById(R.id.content);
     }
 
+    public void setTitle(String title) {
+        if (mTitle != null) mTitle.setText(title);
+    }
+
+    public void setContent(String content) {
+        if (mContent != null) mContent.setText(content);
+    }
 
     public void setItemListener(ItemListener itemListener) {
         mItemListener = itemListener;

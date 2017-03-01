@@ -17,13 +17,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="到站提示" />
+            android:text="到站提示"
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/content"
             style="@style/ListItemTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:gravity="center"
             android:text="到站提示" />
 
