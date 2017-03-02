@@ -174,6 +174,8 @@ public class LineDetailFragment extends BaseListFragment<Station, BaseViewHolder
     @Override
     protected BaseAdapter createAdapter() {
         mAdapter = new Adapter();
+        mAdapter.setStation(AlarmManager.getInstance().getStationName());
+        mAdapter.setBusNumber(AlarmManager.getInstance().getBusNumber());
         return mAdapter;
     }
 
