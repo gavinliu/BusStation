@@ -49,7 +49,7 @@ android {
     }
 
     productFlavors {
-        Meizu {
+        meizu {
             manifestPlaceholders = [UMENG_CHANNEL_VALUE: "MEIZU"]
         }
     }
@@ -68,6 +68,7 @@ android {
 
         debug {
             minifyEnabled false
+            proguardFiles 'proguard-rules.pro'
         }
 
     }

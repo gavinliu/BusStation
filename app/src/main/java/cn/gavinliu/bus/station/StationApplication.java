@@ -28,7 +28,7 @@ public class StationApplication extends Application {
     public void onCreate() {
         super.onCreate();
         ScreenUtils.createInstance(this);
-        MobclickAgent.setDebugMode(true);
+        MobclickAgent.setDebugMode(BuildConfig.DEBUG);
     }
 
     public static Context get() {

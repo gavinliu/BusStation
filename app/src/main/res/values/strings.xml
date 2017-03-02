@@ -23,7 +23,7 @@
 
     <string name="plan_list_empty_tips">站台方案为空，请通过搜索，添加方案。</string>
 
-    <string name="bus_update_tips">待未更新</string>
+    <string name="bus_update_tips">待更新</string>
     <string name="bus_update_time">更新时间：%1$s</string>
 
     <string name="bus_dist">%1$s(%2$s) | 离本站还有 %3$d 站</string>

@@ -33,6 +33,6 @@ public class SettingUtils {
     }
 
     public boolean isVibrate() {
-        return mPreference.getBoolean("isVibrate", false);
+        return mPreference.getBoolean("isVibrate", true);
     }
 }
