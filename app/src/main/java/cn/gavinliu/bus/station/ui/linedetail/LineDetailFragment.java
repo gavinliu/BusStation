@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.otto.Subscribe;
+import com.umeng.analytics.MobclickAgent;
 
 import java.util.List;
 
@@ -86,6 +87,8 @@ public class LineDetailFragment extends BaseListFragment<Station, BaseViewHolder
                 }
 
                 if (PermissionUtils.checkPermission(getActivity())) {
+                    MobclickAgent.onEvent(v.getContext(), "use_alarm");
+
                     AlarmManager.getInstance().setLineId(mLine.getId());
                     AlarmManager.getInstance().setBusNumber(busNumber);
                     AlarmManager.getInstance().setStationName(station);

@@ -11,6 +11,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
@@ -32,6 +33,7 @@ import cn.gavinliu.bus.station.ui.linedetail.LineDetailActivity;
 import cn.gavinliu.bus.station.utils.AlarmChecker;
 import cn.gavinliu.bus.station.utils.EventCaster;
 import cn.gavinliu.bus.station.utils.ScreenUtils;
+import cn.gavinliu.bus.station.utils.SettingUtils;
 import cn.gavinliu.bus.station.widget.AlertLayout;
 import rx.Observable;
 import rx.Subscriber;
@@ -67,6 +69,7 @@ public class AlarmService extends Service {
     private Ringtone mRingtone;
     private WindowManager mWindowManager;
     private NotificationManager mNotificationManager;
+    private Vibrator mVibrator;
 
     private AlertLayout mAlertLayout;
 
@@ -82,6 +85,7 @@ public class AlarmService extends Service {
         mHandler = new Handler();
         mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        mVibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
     }
 
     @Override
@@ -188,21 +192,37 @@ public class AlarmService extends Service {
     }
 
     private void showAlertLayout() {
-        if (mRingtone == null) createRingtone();
+        if (mRingtone == null) {
+            createRingtone();
+        }
 
-        mRingtone.play();
+        if (mRingtone != null) {
+            mRingtone.play();
+        }
+
+        if (SettingUtils.getInstance().isVibrate()) {
+            long[] pattern = {100, 400, 100, 400};
+            mVibrator.vibrate(pattern, 2);
+        }
 
         if (mAlertLayout == null) createAlertLayout();
         WindowManager.LayoutParams layoutParams = createWindowLayoutParams();
 
         mWindowManager.addView(mAlertLayout, layoutParams);
 
-        String content = AlarmManager.getInstance().getStationName() + " 到啦！！！";
+        String content = AlarmManager.getInstance().getStationName() + " 到啦！";
         mAlertLayout.setContent(content);
     }
 
     private void closeAlertLayout() {
-        if (mRingtone != null) mRingtone.stop();
+        if (mRingtone != null) {
+            mRingtone.stop();
+        }
+
+        if (SettingUtils.getInstance().isVibrate()) {
+            mVibrator.cancel();
+        }
+
         mWindowManager.removeView(mAlertLayout);
     }
 

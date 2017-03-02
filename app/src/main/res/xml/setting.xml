@@ -6,9 +6,9 @@
         android:title="功能">
 
         <android.support.v7.preference.CheckBoxPreference
-            android:defaultValue="false"
-            android:key="isNotify"
-            android:title="到站提醒"/>
+            android:defaultValue="true"
+            android:key="isVibrate"
+            android:title="到站提醒震动功能"/>
 
     </android.support.v7.preference.PreferenceCategory>
 
@@ -16,13 +16,9 @@
         android:title="关于">
 
         <android.support.v7.preference.PreferenceScreen
-            android:key="license"
-            android:title="免责声明"/>
-
-        <android.support.v7.preference.PreferenceScreen
             android:key="openSource"
             android:summary="Power by GavinLiu"
-            android:title="开源"/>
+            android:title="开源&amp;免责声明"/>
 
     </android.support.v7.preference.PreferenceCategory>
 
