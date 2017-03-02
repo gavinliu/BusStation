@@ -12,3 +12,5 @@
 
 gradle/
 gradlew*
+
+App-release.jks

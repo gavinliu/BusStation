@@ -47,7 +47,7 @@
 
         <meta-data
             android:name="UMENG_CHANNEL"
-            android:value="MEIZU" />
+            android:value="${UMENG_CHANNEL_VALUE}" />
 
     </application>
 
