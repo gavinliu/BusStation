@@ -17,8 +17,14 @@
         <item name="android:listSeparatorTextViewStyle">@style/AppTheme.ListSeparatorTextView</item>
 
         <item name="preferenceTheme">@style/AppTheme.PreferenceTheme</item>
+
+        <item name="autoCompleteTextViewStyle">@style/cursorColor</item>
     </style>
 
+
+    <style name="cursorColor" parent="Widget.AppCompat.AutoCompleteTextView">
+        <item name="android:textCursorDrawable">@drawable/ic_search_text_cursor</item>
+    </style>
 
     <style name="ListItemTitle">
         <item name="android:textSize">18sp</item>

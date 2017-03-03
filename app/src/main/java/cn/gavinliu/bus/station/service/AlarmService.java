@@ -352,11 +352,15 @@ public class AlarmService extends Service {
             }
         }
 
+        String title = "到站提醒：" + AlarmManager.getInstance().getStationName();
+
         return new NotificationCompat.Builder(getApplication())
-                .setContentTitle("到站提醒: " + AlarmManager.getInstance().getStationName())
+                .setTicker(title)
+                .setContentTitle(title)
                 .setContentText(content)
                 .setSmallIcon(R.mipmap.ic_notification)
                 .setContentIntent(createContentIntent())
+                .setWhen(System.currentTimeMillis())
                 .build();
     }
 

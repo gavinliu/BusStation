@@ -5,6 +5,6 @@
 
     <dimen name="divider_size">2px</dimen>
 
-    <dimen name="alert_layout_margin_LR">60dp</dimen>
+    <dimen name="alert_layout_margin_LR">45dp</dimen>
     <dimen name="alert_layout_height">200dp</dimen>
 </resources>
