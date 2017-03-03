@@ -92,7 +92,7 @@ public class ChoiceLineFragment extends BaseListFragment<Line, BaseViewHolder> {
 
     @Override
     public String getPageName() {
-        return TAG;
+        return "线路选择页";
     }
 
     @Override

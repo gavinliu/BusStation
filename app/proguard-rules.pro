@@ -72,6 +72,7 @@
 -dontwarn android.support.**
 # ---------------------android sdk 推荐的混淆配置结束-------------------#
 
+
 -keepclassmembers class * {
    public <init> (org.json.JSONObject);
 }
@@ -87,12 +88,15 @@
 -keep class * implements java.io.Serializable { *; }
 
 
+
 # BusStation
 -keep public class cn.gavinliu.bus.station.R$*{
     public static final int *;
 }
 -keep class cn.gavinliu.bus.station.network.**{ *; }
 -keep class cn.gavinliu.bus.station.utils.**{ *; }
+-keep class cn.gavinliu.bus.station.event.**{ *; }
+
 
 
 # Support library
@@ -138,4 +142,11 @@
 }
 -keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueConsumerNodeRef {
     rx.internal.util.atomic.LinkedQueueNode consumerNode;
+}
+
+# Otto
+-keepattributes *Annotation*
+-keepclassmembers class ** {
+    @com.squareup.otto.Subscribe public *;
+    @com.squareup.otto.Produce public *;
 }

@@ -45,7 +45,7 @@ public class SearchFragment extends BaseListFragment<String, BaseViewHolder> {
 
     @Override
     public String getPageName() {
-        return TAG;
+        return "搜索页";
     }
 
     public void setKeyword(String key) {

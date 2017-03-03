@@ -48,7 +48,7 @@ public class PlanListFragment extends BaseListFragment<Plan, BaseViewHolder> {
 
     @Override
     public String getPageName() {
-        return TAG;
+        return "方案列表页";
     }
 
     private void createDialog() {

@@ -117,7 +117,7 @@ public class LineDetailFragment extends BaseListFragment<Station, BaseViewHolder
 
     @Override
     public String getPageName() {
-        return TAG;
+        return "线路详情页";
     }
 
     @Subscribe

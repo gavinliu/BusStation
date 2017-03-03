@@ -4,6 +4,7 @@ import java.util.List;
 
 import cn.gavinliu.bus.station.entity.Bus;
 import cn.gavinliu.bus.station.entity.Line;
+import cn.gavinliu.bus.station.event.AlarmCheckerEvent;
 import cn.gavinliu.bus.station.service.AlarmManager;
 import rx.Observable;
 import rx.functions.Func1;
@@ -40,8 +41,4 @@ public class AlarmChecker implements Func1<Line, Observable<Line>> {
         return Observable.just(line);
     }
 
-
-    public static class AlarmCheckerEvent {
-
-    }
 }

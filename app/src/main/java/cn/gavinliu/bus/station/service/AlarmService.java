@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 import cn.gavinliu.bus.station.R;
 import cn.gavinliu.bus.station.entity.Bus;
 import cn.gavinliu.bus.station.entity.Line;
+import cn.gavinliu.bus.station.event.AlarmCheckerEvent;
 import cn.gavinliu.bus.station.event.LineDetailUpdateEvent;
 import cn.gavinliu.bus.station.network.BusQueryServiceImpl;
 import cn.gavinliu.bus.station.ui.linedetail.LineDetailActivity;
@@ -157,7 +158,7 @@ public class AlarmService extends Service {
     }
 
     @Subscribe
-    public void onAlarmFinish(AlarmChecker.AlarmCheckerEvent event) {
+    public void onAlarmFinish(AlarmCheckerEvent event) {
         Log.d(TAG, "onAlarmFinish");
 
         if (mAlarmChecker != null) {

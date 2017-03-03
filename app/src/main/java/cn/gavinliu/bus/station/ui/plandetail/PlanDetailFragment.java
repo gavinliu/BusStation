@@ -72,7 +72,7 @@ public class PlanDetailFragment extends BaseListFragment<Line, BaseViewHolder> {
 
     @Override
     public String getPageName() {
-        return TAG;
+        return "方案详情页";
     }
 
     @Override
