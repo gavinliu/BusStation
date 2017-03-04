@@ -122,7 +122,7 @@ public class LineDetailFragment extends BaseListFragment<Station, BaseViewHolder
 
     @Subscribe
     public void updateBus(Line line) {
-        if (line == null) return;
+        if (line == null || !line.getId().equals(mLine.getId())) return;
         Log.d(TAG, "UpdateBus");
         mAdapter.setBuses(line.getBuses());
 

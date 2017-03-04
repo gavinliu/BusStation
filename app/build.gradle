@@ -28,8 +28,6 @@ android {
         versionName gitTag
 
         buildConfigField "String", "GIT_SHA", "\"${gitSha}\""
-
-        return void
     }
 
     signingConfigs {
@@ -67,7 +65,7 @@ android {
         }
 
         debug {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles 'proguard-rules.pro'
         }
 
@@ -87,7 +85,6 @@ android {
         exclude 'META-INF/RXJAVA'
     }
 
-    return void
 }
 
 dependencies {
