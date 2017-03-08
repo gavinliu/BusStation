@@ -75,6 +75,9 @@ public class SearchFragment extends BaseListFragment<String, BaseViewHolder> {
 
     @Override
     protected String getEmptyTipsText() {
+        if (!isAdded()) {
+            return "";
+        }
         return getResources().getString(R.string.search_result_empty_hint);
     }
 
