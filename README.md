@@ -1,1 +1,5 @@
 # BusStation
+
+## License
+
+MIT
