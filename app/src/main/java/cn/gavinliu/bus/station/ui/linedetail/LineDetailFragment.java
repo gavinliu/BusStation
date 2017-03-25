@@ -12,8 +12,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.HitBuilders;
 import com.squareup.otto.Subscribe;
-import com.umeng.analytics.MobclickAgent;
 
 import java.util.List;
 
@@ -87,7 +87,13 @@ public class LineDetailFragment extends BaseListFragment<Station, BaseViewHolder
                 }
 
                 if (PermissionUtils.checkPermission(getActivity())) {
-                    MobclickAgent.onEvent(v.getContext(), "use_alarm");
+//                    MobclickAgent.onEvent(v.getContext(), "use_alarm");
+
+                    mTracker.send(new HitBuilders.EventBuilder()
+                            .setCategory("到站提醒")
+                            .setAction("到站提醒")
+                            .setLabel("到站提醒")
+                            .build());
 
                     AlarmManager.getInstance().setLineId(mLine.getId());
                     AlarmManager.getInstance().setBusNumber(busNumber);

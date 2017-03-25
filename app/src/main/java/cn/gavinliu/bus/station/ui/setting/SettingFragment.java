@@ -40,7 +40,7 @@ public class SettingFragment extends PreferenceFragmentCompat {
             public boolean onPreferenceClick(Preference preference) {
                 AlertDialog dialog = new AlertDialog.Builder(getContext())
                         .setTitle("免责声明")
-                        .setMessage("程序数据来至微信公众号：珠海公交巴士\n\n非官方客户端中的盗链仅供学习使用，请在下载后24小时内删除，本人不承担任何法律风险。\n\n到站提示功能如失效，导致您延误工作等，本人不承担任何责任。")
+                        .setMessage("程序数据来至微信公众号：珠海公交巴士，如有侵权请联系我。\n\n到站提示功能如果异常，导致您延误工作等，本人不承担任何责任。")
                         .create();
                 dialog.show();
                 return true;
