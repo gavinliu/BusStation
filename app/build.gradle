@@ -50,6 +50,10 @@ android {
         meizu {
             manifestPlaceholders = [UMENG_CHANNEL_VALUE: "MEIZU"]
         }
+
+        play {
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: "Google Play"]
+        }
     }
 
     buildTypes {
